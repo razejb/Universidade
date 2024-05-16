@@ -1,0 +1,238 @@
+/* Grassland */
+
+public class Grassland {
+
+    public final static int EMPTY = 0;
+    public final static int RABBIT = 1;
+    public final static int CARROT = 2;
+
+    private int meadow[][];
+    private int starveTime;
+
+    public Grassland(int i, int j, int starveTime) {
+        this.meadow = new int[i][j];
+        this.starveTime = starveTime;
+    }
+
+    public int width() {
+        return meadow.length;
+    }
+
+    public int height() {
+        return meadow[0].length;
+    }
+
+    public int starveTime() {
+        return starveTime;
+    }
+
+    public void addCarrot(int x, int y) {
+        if (meadow[x][y] == EMPTY) {
+            meadow[x][y] = CARROT;
+        }
+    }
+
+    public void addRabbit(int x, int y) {
+        if (meadow[x][y] == EMPTY) {
+            meadow[x][y] = RABBIT;
+        }
+    }
+
+    public int cellContents(int x, int y) {
+        if (meadow[x][y] == CARROT) {
+            return CARROT;
+        } else if (meadow[x][y] == RABBIT) {
+            return RABBIT;
+        } else {
+            return EMPTY;
+        }
+    }
+
+    public Grassland timeStep() {
+        Grassland nextMeadow = new Grassland(this.width(), this.height(), this.starveTime);
+        for (int i = 0; i < this.width(); i++) {
+            for (int j = 0; j < this.height(); j++) {
+                int cell = this.cellContents(i, j);
+                int carrots = countNeighbors(i, j, CARROT);
+                int rabbits = countNeighbors(i, j, RABBIT);
+                if (cell == RABBIT) {
+                    if (carrots > 0) {
+                        nextMeadow.addRabbit(i, j);
+                    } else if (rabbits < this.starveTime) {
+                        nextMeadow.addRabbit(i, j);
+                    }
+                } else if (cell == CARROT) {
+                    if (rabbits == 0) {
+                        nextMeadow.addCarrot(i, j);
+                    } else if (rabbits >= 2) {
+                        nextMeadow.addRabbit(i, j);
+                    }
+                } else if (cell == EMPTY) {
+                    if (carrots >= 2 && rabbits <= 1) {
+                        nextMeadow.addCarrot(i, j);
+                    } else if (carrots >= 2 && rabbits >= 2) {
+                        nextMeadow.addRabbit(i, j);
+                    }
+                }
+            }
+        }
+        return nextMeadow;
+    }
+
+     private int countNeighbors(int x, int y, int type) {
+        int count = 0;
+        for (int i = Math.max(0, x - 1); i <= Math.min(this.width() - 1, x + 1); i++) {
+            for (int j = Math.max(0, y - 1); j <= Math.min(this.height() - 1, y + 1); j++) {
+                if (i != x || j != y) {
+                    if (this.cellContents(i, j) == type) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
+
+
+/* Simulation */
+
+public class Simulation {
+
+    private static final int cellSize = 4;
+
+    private static int i = 100;
+    private static int j = 100;
+    private static int starveTime = 5;
+
+    private static void draw(Graphics graphics, Grassland mead) {
+        if (mead != null) {
+            int width = mead.width();
+            int height = mead.height();
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int contents = mead.cellContents(x, y);
+                    if (contents == Grassland.RABBIT) {
+                        graphics.setColor(Color.GRAY);
+                        graphics.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    } else if (contents == Grassland.CARROT) {
+                        graphics.setColor(Color.ORANGE);
+                        graphics.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    } else {
+                        graphics.setColor(Color.GREEN);
+                        graphics.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void main(String[] argv) throws InterruptedException {
+        Grassland mea;
+
+        if (argv.length > 0) {
+            try {
+                i = Integer.parseInt(argv[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("O primeiro argumento para a Simulação não é um número.");
+            }
+        }
+
+        if (argv.length > 1) {
+            try {
+                j = Integer.parseInt(argv[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("O segundo argumento para a Simulação não é um número.");
+            }
+        }
+
+        if (argv.length > 2) {
+            try {
+                starveTime = Integer.parseInt(argv[2]);
+            } catch (NumberFormatException e) {
+                System.out.println("O terceiro argumento para a Simulação não é um número.");
+            }
+        }
+
+        Frame frame = new Frame("Rabbits and Carrots");
+        frame.setSize(i * cellSize, j * cellSize);
+        frame.setVisible(true);
+
+        Canvas canvas = new Canvas();
+        canvas.setBackground(Color.white);
+        canvas.setSize(i * cellSize, j * cellSize);
+        frame.add(canvas);
+        Graphics graphics = canvas.getGraphics();
+
+        mea = new Grassland(i, j, starveTime);
+
+        Random random = new Random(0);
+        int x = 0;
+        int y = 0;
+        for (int xx = 0; xx < i; xx++) {
+            x = (x + 78887) % i;
+            if ((x & 8) == 0) {
+                for (int yy = 0; yy < j; yy++) {
+                    y = (y + 78887) % j;
+                    if ((y & 8) == 0) {
+                        int r = random.nextInt();
+                        if (r < 0) {
+                            mea.addCarrot(x, y);
+                        } else if (r > 1500000000) {
+                            mea.addRabbit(x, y);
+                        }
+                    }
+                }
+            }
+        }
+
+        while (true) {
+            Thread.sleep(1000);
+            draw(graphics, mea);
+            mea = mea.timeStep();
+        }
+    }
+}
+
+
+
+Regras:
+
+As regras que determinam o novo prado após uma unidade de tempo, dependem unica e
+exclusivamente dos habitantes que ocupam cada uma das celulas do prado no inicio da unidade
+de tempo. O conteúdo duma célula no fim duma unidade de tempo, é determinada pelo
+conteudo das células dos seus 8 vizinhos, no início da unidade de tempo. Os vizinhos duma
+célula são as células adjacentes a norte, sul, este e oeste e também as quatro diagonais.
+
+Eis as regras:
+1. Se uma célula contem um coelho e algum dos seus vizinhos é uma cenoura, então o
+coelho come a cenoura durante o periodo de tempo, e mantem-se na célula no final do
+período de tempo.(Pode acontecer que vários coelhos disputem a mesma cenoura, não
+há problema, as cenouras chegam para todos).
+
+2. Se uma célula contem um coelho, e nenhum dos seu vizinhos é uma cenoura, ele passará
+fome durante este período de tempo. Se se trata do nésimo +1 periodo de tempo de
+privação (”starveTime”), então o coelho morre (desaparece). Caso contrário manter-se-á
+na célula.
+
+3. Se uma célula contem uma cenoura, e todos os seus vizinhos são cenouras, ou células
+vazias, então no fim da unidade de tempo a cenoura manter-se-á na sua célula.
+
+4. Se uma célula contem um cenoura, e um dos seus vizinhos é um coelho, então a cenoura
+será comida pelo coelho e desaparecerá
+
+5. Se uma célula contem uma cenoura, e dois ou mais dos seus vizinhos são coelhos, então
+um coelho recém-nascido ocupará aquela célula, no fim da unidade de tempo. Os coelhos
+quando nascem estão bem alimentados, tal significando que aguentam ”starveTime”
+unidades de tempo sem se alimentarem, mas tal como os outros coelhos, morrem após
+”starveTime” +1 unidades de tempo sem se alimentar.
+
+6. Se uma célula está vazia e menos de dois vizinhos são cenouras, então manter-se-á vazia.
+
+7. Se uma célula está vazia, e pelo menos dois dos seus vizinhos são cenouras e no máximo
+um dos vizinhos é um coelho, então uma nova cenoura nascerá naquela célula.
+
+8. Se uma c´élula está vazia, e pelo menos dois dos seus vizinhos são cenouras e pelo menos
+dois dos seus vizinhos são coelhos, então um novo coelho nascerá naquela célula (já sabe
+os coelhos recém-nascidos estão bem alimentados!)
