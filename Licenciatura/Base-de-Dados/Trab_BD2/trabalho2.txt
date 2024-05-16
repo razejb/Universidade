@@ -1,0 +1,598 @@
+CREATE TABLE Cliente(
+NIF_Cliente INT NOT NULL,
+nome VARCHAR(40) NOT NULL,
+apelido VARCHAR(40) NOT NULL,
+morada_cliente VARCHAR(40) NOT NULL,
+cidade_cliente VARCHAR(40) NOT NULL,
+cod_postal_cliente VARCHAR(8) NOT NULL,
+telefone INT NOT NULL,
+numero_CartaoCredito BIGINT NOT NULL,
+PRIMARY KEY (NIF_Cliente)
+);
+
+
+CREATE TABLE Pedido(
+hora_pedido INTERVAL NOT NULL,
+NIF_Cliente INT NOT NULL,
+dataPedido DATE NOT NULL,
+origem VARCHAR(40) NOT NULL,
+destino VARCHAR(40) NOT NULL,
+cancelado VARCHAR(40) NOT NULL,
+PRIMARY KEY(hora_pedido, dataPedido, NIF_Cliente),
+FOREIGN KEY(NIF_Cliente) REFERENCES cliente(nif_cliente)
+);
+
+
+CREATE TABLE Condutor(
+NIF_Condutor INT NOT NULL,
+nome VARCHAR(40) NOT NULL,
+apelido VARCHAR(40) NOT NULL,
+numero_CartaConducao INT NOT NULL,
+NIB BIGINT NOT NULL,
+telefone INT NOT NULL,
+morada_condutor VARCHAR(40) NOT NULL,
+cidade_condutor VARCHAR(40) NOT NULL,
+cod_postal_condutor VARCHAR(8) NOT NULL,
+nacionalidade VARCHAR(40) NOT NULL,
+inf_veiculo VARCHAR(255) NOT NULL,
+PRIMARY KEY (NIF_Condutor)
+);
+
+
+CREATE TABLE Servico(
+data_inicio DATE NOT NULL,
+hora_inicio INTERVAL NOT NULL,
+NIF_Condutor INT NOT NULL,
+NIF_Cliente INT NOT NULL,
+data_fim DATE NOT NULL,
+hora_fim INTERVAL NOT NULL,
+valor_cobrado NUMERIC(10, 2) NOT NULL,
+PRIMARY KEY(data_inicio, hora_inicio, NIF_Condutor),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor(nif_condutor),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente(nif_cliente)
+);
+
+
+CREATE TABLE AvaliacaoDoCliente(
+cod_AvaliacaoDoCliente INT NOT NULL,
+NIF_Cliente  INT NOT NULL,
+NIF_Condutor  INT NOT NULL,
+PontuacaoCondutor INTEGER CHECK (PontuacaoCondutor >= 0 AND PontuacaoCondutor <= 5) NOT NULL,
+PRIMARY KEY (cod_AvaliacaoDoCliente),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor(nif_condutor),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente(nif_cliente)
+);
+
+
+CREATE TABLE AvaliacaoDoCondutor(
+cod_AvaliacaoDoCondutor INT NOT NULL,
+NIF_Cliente  INT NOT NULL,
+NIF_Condutor  INT NOT NULL,
+PontuacaoCliente INTEGER CHECK (PontuacaoCliente >= 0 AND PontuacaoCliente <= 5) NOT NULL,
+PRIMARY KEY (cod_AvaliacaoDoCondutor),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor(nif_condutor),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente(nif_cliente)
+);
+
+
+CREATE TABLE Cliente_Pedido (
+NIF_Cliente INT NOT NULL,
+dataPedido DATE NOT NULL,
+hora_pedido INTERVAL NOT NULL,
+PRIMARY KEY (dataPedido, hora_pedido, NIF_Cliente),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente (nif_cliente)
+);
+
+
+CREATE TABLE Servico_Condutor (
+NIF_Condutor INT NOT NULL,
+data_inicio DATE NOT NULL,
+hora_inicio INTERVAL NOT NULL,
+PRIMARY KEY (data_inicio, hora_inicio, NIF_Condutor),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor (nif_condutor)
+);
+
+
+CREATE TABLE Cliente_Avaliacao (
+cod_AvaliacaoDoCliente INT NOT NULL,
+NIF_Cliente INT NOT NULL,
+NIF_Condutor INT NOT NULL,
+PRIMARY KEY (NIF_Cliente, NIF_Condutor, cod_AvaliacaoDoCliente),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente (nif_cliente),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor (nif_condutor),
+FOREIGN KEY (cod_AvaliacaoDoCliente) REFERENCES AvaliacaoDoCliente (cod_AvaliacaoDoCliente)
+);
+
+
+CREATE TABLE Condutor_Avaliacao (
+cod_AvaliacaoDoCondutor INT NOT NULL,
+NIF_Cliente INT NOT NULL,
+NIF_Condutor INT NOT NULL,
+PRIMARY KEY (NIF_Cliente, NIF_Condutor, cod_AvaliacaoDoCondutor),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente (nif_cliente),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor (nif_condutor),
+FOREIGN KEY (cod_AvaliacaoDoCondutor) REFERENCES AvaliacaoDoCondutor (cod_AvaliacaoDoCondutor)
+);
+
+
+CREATE TABLE Pedido_Servico (
+NIF_Cliente INT NOT NULL,
+NIF_Condutor INT NOT NULL,
+dataPedido DATE NOT NULL,
+hora_pedido INTERVAL NOT NULL,
+data_inicio DATE NOT NULL,
+hora_inicio INTERVAL NOT NULL,
+PRIMARY KEY (dataPedido, hora_pedido, data_inicio, hora_inicio),
+FOREIGN KEY (NIF_Cliente) REFERENCES cliente (nif_cliente),
+FOREIGN KEY (NIF_Condutor) REFERENCES condutor (nif_condutor)
+);
+
+
+
+
+
+INSERT INTO Cliente VALUES ('252957100', 'Maria', 'Silva', 'Rua Figueiras n63', 'Medas', '4515-347', '221145549', '4475511761859431');
+INSERT INTO Cliente VALUES ('214039860', 'Josefina', 'Pina', 'Estrada Laranjeiras n118', 'Lisboa', '1100-558', '211872479', '4717232283684323');
+INSERT INTO Cliente VALUES ('215220731', 'Joao', 'Bernardo', 'Rua Alegria n69', 'Forno De Cima', '4575-485', '221221737', '6841050359933524');
+INSERT INTO Cliente VALUES ('288213490', 'Joana', 'Fonseca', 'Rua Luisa Tody n9', 'Zambujal', '2970-821', '265470271', '9416392549715726');
+INSERT INTO Cliente VALUES ('212117187', 'Catarina', 'Bilro', 'Quinta Fontainhas n59', 'Foz Giraldo', '6185-251', '272757479', '8058937792410771'); 
+INSERT INTO Cliente VALUES ('291528452', 'Bernardo', 'Fontes', 'Rua Brigadeiro Lino Valente n46', 'Porteirinha', '2240-560', '243457463', '2180537125710156');    
+INSERT INTO Cliente VALUES ('215181257', 'Miguel', 'Fernandes', 'Rua Ciprestes n41', 'Carnaxide', '2790-209', '215660785', '9318773898125673');      
+INSERT INTO Cliente VALUES ('219134558', 'Manuel', 'Santos', 'Rua Floresta n4', 'Palmela', '2950-226', '265504027', '9232547469767288');    
+INSERT INTO Cliente VALUES ('224233536', 'Bárbara', 'Gomes', 'Rua Mouro n25', 'Arraiolos', '2735-432', '216554207', '7021973353806224');    
+INSERT INTO Cliente VALUES ('232322600', 'Afonso', 'Carvalho', 'Rua Salvador n29', 'Lisboa', '4730-520', '253649825', '8686373069186989');
+
+
+
+INSERT INTO condutor VALUES ('253953101', 'Andre', 'Ricardo', '121874549', '000100010784782349102', '221345669', 'Rua Diogo Cão n67', 'Oeiras', '2780-079', 'portuguesa ', '4 passageiros');
+INSERT INTO condutor VALUES ('216031869', 'Joaquim', 'Gomes', '311757479', '000100056355686757024', '241672129', 'Rua Armazéns n48', 'Porto', '4150-709', 'portuguesa', '4 passageiros');
+INSERT INTO condutor VALUES ('218202737', 'Paulo', 'Sousa', '421261737', '000100071754452554250', '234514557', 'Rua Augusta n30', ' Sobral De Ceira', '3030-849', 'portuguesa', '4 passageiros');
+INSERT INTO condutor VALUES ('283215493', 'Wilson', 'José', '265421771', '000100038087106266947', '232470228', 'Rua Galé n30', ' Alhos Vedros', '2860-031', 'portuguesa', '6 passageiros');
+INSERT INTO condutor VALUES ('219111182', 'Fernando', 'Fernandes', '872357479', '000100035235358418221', '278725579', 'R Pádua Correia 40', 'Vila Nova De Gaia', '4430-439', 'portuguesa', '6 passageiros');
+
+
+
+INSERT INTO servico VALUES (TO_DATE('21-01-2003', 'DD-MM-YYYY'), '08:30:00', '253953101', '252957100', TO_DATE('21-01-2003', 'DD-MM-YYYY'), '08:53:00', 6.9);
+INSERT INTO servico VALUES (TO_DATE('01-02-2005', 'DD-MM-YYYY'), '09:00:00', '253953101', '252957100', TO_DATE('01-02-2005', 'DD-MM-YYYY'), '09:30:00', 9);
+INSERT INTO servico VALUES (TO_DATE('25-01-2001', 'DD-MM-YYYY'), '08:00:00', '253953101', '252957100', TO_DATE('25-01-2001', 'DD-MM-YYYY'), '09:20:00', 27);
+INSERT INTO servico VALUES (TO_DATE('12-01-2003', 'DD-MM-YYYY'), '09:15:00', '253953101', '252957100', TO_DATE('12-01-2003', 'DD-MM-YYYY'), '09:25:00', 3);
+INSERT INTO servico VALUES (TO_DATE('14-01-1999', 'DD-MM-YYYY'), '09:10:00', '253953101', '252957100', TO_DATE('14-01-1999', 'DD-MM-YYYY'), '10:00:00', 15);
+INSERT INTO servico VALUES (TO_DATE('17-01-1999', 'DD-MM-YYYY'), '10:12:00', '253953101', '252957100', TO_DATE('17-01-1999', 'DD-MM-YYYY'), '13:02:00', 51);
+INSERT INTO servico values (TO_DATE('21-01-1995', 'DD-MM-YYYY'), '10:35:00', '253953101', '252957100', TO_DATE('21-01-1995', 'DD-MM-YYYY'), '11:35:00', 18);
+INSERT INTO servico values (TO_DATE('18-01-2006', 'DD-MM-YYYY'), '10:23:00', '253953101', '252957100', TO_DATE('18-01-2006', 'DD-MM-YYYY'), '12:13:00', 33);
+INSERT INTO servico values (TO_DATE('22-01-1993', 'DD-MM-YYYY'), '10:44:00', '253953101', '252957100', TO_DATE('22-01-1993', 'DD-MM-YYYY'), '11:27:00', 12.9);
+INSERT INTO servico values (TO_DATE('26-01-1987', 'DD-MM-YYYY'), '10:11:00', '253953101', '252957100', TO_DATE('26-01-1987', 'DD-MM-YYYY'), '11:09:00', 17.4);
+
+INSERT INTO servico VALUES (TO_DATE('11-01-1993', 'DD-MM-YYYY'), '12:12:00', '253953101', '214039860', TO_DATE('11-01-1993', 'DD-MM-YYYY'), '12:55:00', 12.9);
+INSERT INTO servico VALUES (TO_DATE('08-01-1994', 'DD-MM-YYYY'), '12:37:00', '216031869', '214039860', TO_DATE('08-01-1994', 'DD-MM-YYYY'), '12:47:00', 3);
+INSERT INTO servico VALUES (TO_DATE('09-01-1986', 'DD-MM-YYYY'), '12:36:00', '216031869', '214039860', TO_DATE('09-01-1986', 'DD-MM-YYYY'), '13:08:00', 9.6);
+INSERT INTO servico VALUES (TO_DATE('02-01-1985', 'DD-MM-YYYY'), '15:02:00', '216031869', '214039860', TO_DATE('02-01-1985', 'DD-MM-YYYY'), '15:50:00', 14.4);
+INSERT INTO servico VALUES (TO_DATE('05-01-1982', 'DD-MM-YYYY'), '16:02:00', '216031869', '214039860', TO_DATE('05-01-1982', 'DD-MM-YYYY'), '16:30:00', 8.4);
+INSERT INTO servico VALUES (TO_DATE('22-01-2007', 'DD-MM-YYYY'), '16:07:00', '216031869', '214039860', TO_DATE('22-01-2007', 'DD-MM-YYYY'), '16:28:00', 6.3);
+INSERT INTO servico VALUES (TO_DATE('16-01-2008', 'DD-MM-YYYY'), '18:20:00', '216031869', '214039860', TO_DATE('16-01-2008', 'DD-MM-YYYY'), '19:16:00', 16.8);
+INSERT INTO servico VALUES (TO_DATE('17-01-2002', 'DD-MM-YYYY'), '17:26:00', '216031869', '214039860', TO_DATE('17-01-2002', 'DD-MM-YYYY'), '20:46:00', 60);
+INSERT INTO servico VALUES (TO_DATE('02-01-2003', 'DD-MM-YYYY'), '21:48:00', '216031869', '214039860', TO_DATE('03-01-2003', 'DD-MM-YYYY'), '01:48:00', 72);
+
+INSERT INTO servico VALUES (TO_DATE('22-01-2001', 'DD-MM-YYYY'), '07:12:00', '216031869', '215220731', TO_DATE('22-01-2001', 'DD-MM-YYYY'), '08:19:00', 23.1);
+INSERT INTO servico VALUES (TO_DATE('10-03-2006', 'DD-MM-YYYY'), '09:10:00', '216031869', '215220731', TO_DATE('10-03-2006', 'DD-MM-YYYY'), '09:51:00', 12.3);
+INSERT INTO servico VALUES (TO_DATE('31-01-2009', 'DD-MM-YYYY'), '19:26:00', '216031869', '215220731', TO_DATE('31-01-2009', 'DD-MM-YYYY'), '19:40:00', 4.2);
+INSERT INTO servico VALUES (TO_DATE('01-02-2015', 'DD-MM-YYYY'), '15:21:00', '218202737', '215220731', TO_DATE('01-02-2015', 'DD-MM-YYYY'), '20:34:00', 99.9);
+INSERT INTO servico VALUES (TO_DATE('02-02-2002', 'DD-MM-YYYY'), '22:00:00', '218202737', '215220731', TO_DATE('03-02-2002', 'DD-MM-YYYY'), '09:06:00', 199.8);
+INSERT INTO servico VALUES (TO_DATE('03-03-2003', 'DD-MM-YYYY'), '00:00:00', '218202737', '215220731', TO_DATE('03-03-2003', 'DD-MM-YYYY'), '16:39:00', 299.7);
+INSERT INTO servico VALUES (TO_DATE('01-01-2001', 'DD-MM-YYYY'), '13:00:00', '218202737', '215220731', TO_DATE('01-01-2001', 'DD-MM-YYYY'), '13:05:00', 1.5);
+INSERT INTO servico VALUES (TO_DATE('04-11-2023', 'DD-MM-YYYY'), '19:02:00', '218202737', '215220731', TO_DATE('04-11-2023', 'DD-MM-YYYY'), '19:30:00', 8.4);
+INSERT INTO servico VALUES (TO_DATE('05-05-2005', 'DD-MM-YYYY'), '07:06:00', '218202737', '288213490', TO_DATE('05-05-2005', 'DD-MM-YYYY'), '07:50:00', 13.2);
+INSERT INTO servico VALUES (TO_DATE('06-06-2006', 'DD-MM-YYYY'), '07:00:00', '218202737', '288213490', TO_DATE('09-06-2006', 'DD-MM-YYYY'), '19:00:00', 1512);
+INSERT INTO servico VALUES (TO_DATE('07-07-2007', 'DD-MM-YYYY'), '12:24:00', '218202737', '288213490', TO_DATE('07-07-2007', 'DD-MM-YYYY'), '13:25:00', 18.3);
+INSERT INTO servico VALUES (TO_DATE('08-08-2008', 'DD-MM-YYYY'), '14:35:00', '218202737', '288213490', TO_DATE('08-08-2008', 'DD-MM-YYYY'), '15:48:00', 21.9);
+INSERT INTO servico VALUES (TO_DATE('09-09-2009', 'DD-MM-YYYY'), '11:42:00', '218202737', '288213490', TO_DATE('09-09-2009', 'DD-MM-YYYY'), '12:45:00', 24.9);
+INSERT INTO servico VALUES (TO_DATE('10-10-2010', 'DD-MM-YYYY'), '16:22:00', '218202737', '288213490', TO_DATE('10-10-2010', 'DD-MM-YYYY'), '16:56:00', 10.2);
+INSERT INTO servico VALUES (TO_DATE('11-11-2011', 'DD-MM-YYYY'), '17:58:00', '283215493', '288213490', TO_DATE('11-11-2011', 'DD-MM-YYYY'), '18:27:00', 8.7);
+
+INSERT INTO servico VALUES (TO_DATE('12-12-2012', 'DD-MM-YYYY'), '18:21:00', '283215493', '212117187',  TO_DATE('12-12-2012', 'DD-MM-YYYY'), '18:35:00', 4.2);
+INSERT INTO servico VALUES (TO_DATE('25-08-2023', 'DD-MM-YYYY'), '18:31:00', '283215493', '212117187', TO_DATE('25-08-2023', 'DD-MM-YYYY'), '19:50:00', 23.7);
+INSERT INTO servico VALUES (TO_DATE('15-01-2022', 'DD-MM-YYYY'), '09:02:00', '283215493', '212117187', TO_DATE('15-01-2022', 'DD-MM-YYYY'), '10:10:00', 20.4);
+INSERT INTO servico VALUES (TO_DATE('19-01-2024', 'DD-MM-YYYY'), '12:02:00', '283215493', '212117187', TO_DATE('19-01-2024', 'DD-MM-YYYY'), '12:53:00', 15.3);
+INSERT INTO servico VALUES (TO_DATE('11-09-2001', 'DD-MM-YYYY'), '15:06:00', '283215493', '212117187', TO_DATE('11-09-2001', 'DD-MM-YYYY'), '16:46:00', 30);
+INSERT INTO servico VALUES (TO_DATE('25-08-2016', 'DD-MM-YYYY'), '16:30:00', '283215493', '212117187', TO_DATE('25-08-2016', 'DD-MM-YYYY'), '18:03:00', 27.9);
+
+INSERT INTO servico VALUES (TO_DATE('19-07-2018', 'DD-MM-YYYY'), '20:22:00', '283215493', '291528452', TO_DATE('19-07-2018', 'DD-MM-YYYY'), '20:51:00', 8.7);
+INSERT INTO servico VALUES (TO_DATE('27-04-2015', 'DD-MM-YYYY'), '21:20:00','283215493', '291528452',  TO_DATE('27-04-2015', 'DD-MM-YYYY'), '22:38:00', 23.4);
+INSERT INTO servico VALUES (TO_DATE('27-04-2015', 'DD-MM-YYYY'), '23:03:00', '283215493', '291528452', TO_DATE('12-09-1999', 'DD-MM-YYYY'), '23:34:00', 9.3);
+INSERT INTO servico VALUES (TO_DATE('12-12-2003', 'DD-MM-YYYY'), '00:25:00', '283215493', '291528452', TO_DATE('12-12-2003', 'DD-MM-YYYY'), '01:50:00', 25.5);
+INSERT INTO servico VALUES (TO_DATE('19-03-2013', 'DD-MM-YYYY'), '16:22:00', '219111182', '291528452', TO_DATE('19-03-2013', 'DD-MM-YYYY'), '17:59:00', 29.1);
+
+INSERT INTO servico VALUES (TO_DATE('13-07-2022', 'DD-MM-YYYY'), '17:52:00', '219111182', '215181257', TO_DATE('13-07-2022', 'DD-MM-YYYY'), '18:12:00', 6);
+INSERT INTO servico VALUES (TO_DATE('29-02-2020', 'DD-MM-YYYY'), '18:21:00', '219111182', '215181257', TO_DATE('29-02-2020', 'DD-MM-YYYY'), '18:40:00', 5.7);
+INSERT INTO servico VALUES (TO_DATE('02-08-1991', 'DD-MM-YYYY'), '19:08:00', '219111182', '215181257', TO_DATE('02-08-1991', 'DD-MM-YYYY'), '20:01:00', 15.9);
+INSERT INTO servico VALUES (TO_DATE('05-12-1994', 'DD-MM-YYYY'), '14:06:00', '219111182', '215181257', TO_DATE('05-12-1994', 'DD-MM-YYYY'), '15:09:00', 18.9);
+
+INSERT INTO servico VALUES (TO_DATE('14-06-2002', 'DD-MM-YYYY'), '13:26:00', '219111182', '219134558', TO_DATE('14-06-2002', 'DD-MM-YYYY'), '13:35:00', 2.7);
+INSERT INTO servico VALUES (TO_DATE('20-12-2023', 'DD-MM-YYYY'), '12:55:00', '219111182', '219134558', TO_DATE('20-12-2023', 'DD-MM-YYYY'), '13:19:00', 7.2);
+insert into servico VALUES (TO_DATE('20-12-2023', 'DD-MM-YYYY'), '02:36:00', '219111182', '219134558', TO_DATE('20-12-2023', 'DD-MM-YYYY'), '04:39:00', 36.6);
+
+INSERT INTO servico VALUES (TO_DATE('20-04-1980', 'DD-MM-YYYY'), '05:47:00', '219111182', '224233536', TO_DATE('20-04-1980', 'DD-MM-YYYY'), '08:55:00', 56.4);
+INSERT INTO servico VALUES (TO_DATE('15-06-1982', 'DD-MM-YYYY'), '06:56:00', '219111182', '224233536', TO_DATE('15-06-1982', 'DD-MM-YYYY'), '08:53:00', 53.1);
+
+INSERT INTO servico VALUES (TO_DATE('23-01-1981', 'DD-MM-YYYY'), '11:12:00', '219111182', '232322600', TO_DATE('23-01-1981', 'DD-MM-YYYY'), '12:21:00', 20.7);
+
+
+
+INSERT INTO pedido VALUES ('08:20:00', '252957100', TO_DATE('21-01-2003', 'DD-MM-YYYY'), 'Porto', 'Gaia', 'nao cancelado');
+INSERT INTO pedido VALUES ('08:50:00', '252957100', TO_DATE('01-02-2005', 'DD-MM-YYYY'), 'Almeirim', 'Cartaxo', 'nao cancelado');
+INSERT INTO pedido VALUES ('07:50:00', '252957100', TO_DATE('25-01-2001', 'DD-MM-YYYY'), 'Ferreira do Zezere', 'Ponte de Sor', 'nao cancelado');
+INSERT INTO pedido VALUES ('09:00:00', '252957100', TO_DATE('12-01-2003', 'DD-MM-YYYY'), 'Torres Novas', 'Riachos', 'nao cancelado');
+INSERT INTO pedido VALUES ('09:00:00', '252957100', TO_DATE('14-01-1999', 'DD-MM-YYYY'), 'Torres Novas', 'Coruche', 'nao cancelado');
+INSERT INTO pedido VALUES ('10:00:00', '252957100', TO_DATE('17-01-1999', 'DD-MM-YYYY'), 'Faro', 'Lisboa', 'nao cancelado');
+INSERT INTO pedido VALUES ('10:20:00', '252957100', TO_DATE('21-01-1995', 'DD-MM-YYYY'), 'Borba', 'Evora', 'nao cancelado');
+INSERT INTO pedido VALUES ('10:10:00', '252957100', TO_DATE('18-01-2006', 'DD-MM-YYYY'), 'Faro', 'Ferreira do Alentejo', 'nao cancelado');
+INSERT INTO pedido VALUES ('10:30:00', '252957100', TO_DATE('22-01-1993', 'DD-MM-YYYY'), 'Estremoz', 'Evora', 'nao cancelado');
+INSERT INTO pedido VALUES ('10:00:00', '252957100', TO_DATE('26-01-1987', 'DD-MM-YYYY'), 'Faro', 'Portimão', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('12:00:00', '214039860', TO_DATE('11-01-1993', 'DD-MM-YYYY'), 'Porto', 'Lousada', 'nao cancelado');
+INSERT INTO pedido VALUES ('12:25:00', '214039860', TO_DATE('08-01-1994', 'DD-MM-YYYY'), 'Porto', 'Maia', 'nao cancelado');
+INSERT INTO pedido VALUES ('12:25:00', '214039860', TO_DATE('09-01-1986', 'DD-MM-YYYY'), 'Elvas', 'Borba', 'nao cancelado');
+INSERT INTO pedido VALUES ('14:50:00', '214039860', TO_DATE('02-01-1985', 'DD-MM-YYYY'), 'Porto', 'Arouca', 'nao cancelado');
+INSERT INTO pedido VALUES ('15:50:00', '214039860', TO_DATE('05-01-1982', 'DD-MM-YYYY'), 'Vila Real', 'Alijo', 'nao cancelado');
+INSERT INTO pedido VALUES ('16:00:00', '214039860', TO_DATE('22-01-2007', 'DD-MM-YYYY'), 'Vila Real', 'Peso da Regua', 'nao cancelado');
+INSERT INTO pedido VALUES ('18:10:00', '214039860', TO_DATE('16-01-2008', 'DD-MM-YYYY'), 'Vila Real', 'Vila Nova de Paiva', 'nao cancelado');
+INSERT INTO pedido VALUES ('17:15:00', '214039860', TO_DATE('17-01-2002', 'DD-MM-YYYY'), 'Vila Real', 'Caldas da Rainha', 'nao cancelado');
+INSERT INTO pedido VALUES ('21:35:00', '214039860', TO_DATE('02-01-2003', 'DD-MM-YYYY'), 'Evora', 'Cordoba', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('10:00:00', '214039860', TO_DATE('03-05-2004', 'DD-MM-YYYY'), 'Evora', 'Madrid', 'cancelado');
+INSERT INTO pedido VALUES ('11:00:00', '214039860', TO_DATE('20-06-2003', 'DD-MM-YYYY'), 'Caldas da Rainha', 'Guimarães', 'cancelado');
+
+INSERT INTO pedido VALUES ('07:00:00', '215220731', TO_DATE('22-01-2001', 'DD-MM-YYYY'), 'Evora', 'Setubal', 'nao cancelado');
+INSERT INTO pedido VALUES ('09:00:00', '215220731', TO_DATE('10-03-2006', 'DD-MM-YYYY'), 'Evora', 'Badajoz', 'nao cancelado');
+INSERT INTO pedido VALUES ('19:15:00', '215220731', TO_DATE('31-01-2009', 'DD-MM-YYYY'), 'Vila Viçosa', 'Estremoz', 'nao cancelado');
+INSERT INTO pedido VALUES ('15:10:00', '215220731', TO_DATE('01-02-2015', 'DD-MM-YYYY'), 'Evora', 'Linares', 'nao cancelado');
+INSERT INTO pedido VALUES ('21:50:00', '215220731', TO_DATE('02-02-2002', 'DD-MM-YYYY'), 'Evora', 'Barcelona', 'nao cancelado');
+INSERT INTO pedido VALUES ('23:50:00', '215220731', TO_DATE('03-03-2003', 'DD-MM-YYYY'), 'Evora', 'Toulouse', 'nao cancelado');
+INSERT INTO pedido VALUES ('12:50:00', '215220731', TO_DATE('01-01-2001', 'DD-MM-YYYY'), 'Borba', 'Rio de Moinhos', 'nao cancelado');
+INSERT INTO pedido VALUES ('18:50:00', '215220731', TO_DATE('04-11-2023', 'DD-MM-YYYY'), 'Evora', 'Montemor', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('10:30:00', '215220731', TO_DATE('07-10-2007', 'DD-MM-YYYY'), 'Caldas da Rainha', 'Obidos', 'cancelado');
+INSERT INTO pedido VALUES ('10:00:00', '215220731', TO_DATE('02-07-2001', 'DD-MM-YYYY'), 'Palmela', 'Portel', 'cancelado');
+
+INSERT INTO pedido VALUES ('07:00:00', '288213490', TO_DATE('05-05-2005', 'DD-MM-YYYY'), 'Campo Maior', 'Vimieiro', 'nao cancelado');
+INSERT INTO pedido VALUES ('06:50:00', '288213490', TO_DATE('06-06-2006', 'DD-MM-YYYY'), 'Lisboa', 'Eslováquia', 'nao cancelado');
+INSERT INTO pedido VALUES ('12:15:00', '288213490', TO_DATE('07-07-2007', 'DD-MM-YYYY'), 'Lisboa', 'Santarém', 'nao cancelado');
+INSERT INTO pedido VALUES ('14:25:00', '288213490', TO_DATE('08-08-2008', 'DD-MM-YYYY'), 'Lisboa', 'Golga', 'nao cancelado');
+INSERT INTO pedido VALUES ('11:30:00', '288213490', TO_DATE('09-09-2009', 'DD-MM-YYYY'), 'Lisboa', 'Rio Maior', 'nao cancelado');
+INSERT INTO pedido VALUES ('16:10:00', '288213490', TO_DATE('10-10-2010', 'DD-MM-YYYY'), 'Lisboa', 'Mafra', 'nao cancelado');
+INSERT INTO pedido VALUES ('17:45:00', '288213490', TO_DATE('11-11-2011', 'DD-MM-YYYY'), 'Lisboa', 'Sintra', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('10:10:00', '288213490', TO_DATE('23-05-2008', 'DD-MM-YYYY'), 'Odivelas', 'Viana do Alentejo', 'cancelado');
+INSERT INTO pedido VALUES ('10:30:00', '288213490', TO_DATE('29-04-2001', 'DD-MM-YYYY'), 'Lourinha', 'Gaviao', 'cancelado');
+
+INSERT INTO pedido VALUES ('18:10:00', '212117187', TO_DATE('12-12-2012', 'DD-MM-YYYY'), 'Almeirim', 'Santarém', 'nao cancelado');
+INSERT INTO pedido VALUES ('18:20:00', '212117187', TO_DATE('25-08-2023', 'DD-MM-YYYY'), 'Santarém', 'Muge', 'nao cancelado');
+INSERT INTO pedido VALUES ('08:50:00', '212117187', TO_DATE('15-01-2022', 'DD-MM-YYYY'), 'Santarém', 'Ericeira', 'nao cancelado');
+INSERT INTO pedido VALUES ('11:55:00', '212117187', TO_DATE('19-01-2024', 'DD-MM-YYYY'), 'Sobral de Monte Agraco', 'Santarém', 'nao cancelado');
+INSERT INTO pedido VALUES ('15:00:00', '212117187', TO_DATE('11-09-2001', 'DD-MM-YYYY'), 'Comporta', 'Santarém', 'nao cancelado');
+INSERT INTO pedido VALUES ('16:20:00', '212117187', TO_DATE('25-08-2016', 'DD-MM-YYYY'), 'Santarém', 'Montemor-o-Novo', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('16:10:00', '212117187', TO_DATE('01-09-2008', 'DD-MM-YYYY'), 'Viseu', 'Guarda', 'cancelado');
+INSERT INTO pedido VALUES ('17:45:00', '212117187', TO_DATE('17-05-2005', 'DD-MM-YYYY'), 'Estremoz', 'Coimbra', 'cancelado');
+INSERT INTO pedido VALUES ('14:08:00', '212117187', TO_DATE('30-09-2009', 'DD-MM-YYYY'), 'Cacem', 'Viseu', 'cancelado');
+
+INSERT INTO pedido VALUES ('20:10:00', '291528452', TO_DATE('19-07-2018', 'DD-MM-YYYY'), 'Leiria', 'Fátima', 'nao cancelado');
+INSERT INTO pedido VALUES ('21:10:00', '291528452', TO_DATE('27-04-2015', 'DD-MM-YYYY'), 'Leiria', 'Mafra', 'nao cancelado');
+INSERT INTO pedido VALUES ('22:50:00', '291528452', TO_DATE('27-04-2015', 'DD-MM-YYYY'), 'Mafra', 'Leiria', 'nao cancelado');
+INSERT INTO pedido VALUES ('00:15:00', '291528452', TO_DATE('12-12-2003', 'DD-MM-YYYY'), 'Leiria', 'Agueda', 'nao cancelado');
+INSERT INTO pedido VALUES ('16:10:00', '291528452', TO_DATE('19-03-2013', 'DD-MM-YYYY'), 'Leiria', 'Castelo Branco', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('16:20:00', '291528452', TO_DATE('27-02-2004', 'DD-MM-YYYY'), 'Albufeira', 'Portimao', 'cancelado');
+INSERT INTO pedido VALUES ('17:45:00', '291528452', TO_DATE('30-11-2002', 'DD-MM-YYYY'), 'Almada', 'Setubal', 'cancelado');
+
+INSERT INTO pedido VALUES ('17:40:00', '215181257', TO_DATE('13-07-2022', 'DD-MM-YYYY'), 'Porto', 'Santa Maria da Feira', 'nao cancelado');
+INSERT INTO pedido VALUES ('18:10:00', '215181257', TO_DATE('29-02-2020', 'DD-MM-YYYY'), 'Viana do Castelo', 'Esposende', 'nao cancelado');
+INSERT INTO pedido VALUES ('19:00:00', '215181257', TO_DATE('02-08-1991', 'DD-MM-YYYY'), 'Viana do Castelo', 'Braga', 'nao cancelado');
+INSERT INTO pedido VALUES ('14:00:00', '215181257', TO_DATE('05-12-1994', 'DD-MM-YYYY'), 'Guarda', 'Manteigas', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('15:00:00', '215181257', TO_DATE('12-11-2006', 'DD-MM-YYYY'), 'Mirandela', 'Branganca', 'cancelado');
+INSERT INTO pedido VALUES ('16:20:00', '215181257', TO_DATE('22-09-1978', 'DD-MM-YYYY'), 'Castelo Branco', 'Guarda', 'cancelado');
+
+INSERT INTO pedido VALUES ('13:15:00', '219134558', TO_DATE('14-06-2002', 'DD-MM-YYYY'), 'Almeirim', 'Fazendas de Almeirim', 'nao cancelado');
+INSERT INTO pedido VALUES ('12:45:00', '219134558', TO_DATE('20-12-2023', 'DD-MM-YYYY'), 'Lagos', 'Viana do Alentejo', 'nao cancelado');
+INSERT INTO pedido VALUES ('02:25:00', '219134558', TO_DATE('20-12-2023', 'DD-MM-YYYY'), 'Lagos', 'Beja', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('14:25:00', '219134558', TO_DATE('31-12-2019', 'DD-MM-YYYY'), 'Ayamonte', 'Loule', 'cancelado');
+INSERT INTO pedido values ('11:30:00', '219134558', TO_DATE('25-12-2014', 'DD-MM-YYYY'), 'Reguengos de Monsaraz', 'Odemira', 'cancelado');
+
+INSERT INTO pedido VALUES ('05:30:00', '224233536', TO_DATE('20-04-1980', 'DD-MM-YYYY'), 'Huelva', 'Lagos', 'nao cancelado');
+INSERT INTO pedido VALUES ('06:40:00', '224233536', TO_DATE('15-06-1982', 'DD-MM-YYYY'), 'Santarem', 'Castelo Branco', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('16:10:00', '224233536', TO_DATE('24-12-2010', 'DD-MM-YYYY'), 'Caldas da Rainha', 'Nazare', 'cancelado');
+INSERT INTO pedido VALUES ('17:45:00', '224233536', TO_DATE('10-10-2011', 'DD-MM-YYYY'), 'Figueira da Foz', 'Cines', 'cancelado');
+
+INSERT INTO pedido VALUES ('11:00:00', '232322600', TO_DATE('23-01-1981', 'DD-MM-YYYY'), 'Mirandela', 'Amarante', 'nao cancelado');
+
+INSERT INTO pedido VALUES ('11:00:00', '232322600', TO_DATE('02-03-2008', 'DD-MM-YYYY'), 'Fátima', 'Tomar', 'cancelado');
+INSERT INTO pedido VALUES ('02:25:00', '232322600', TO_DATE('26-12-1998', 'DD-MM-YYYY'), 'Pombal', 'Branganca', 'cancelado');
+
+
+
+INSERT INTO avaliacaodocondutor VALUES (1, '252957100', '253953101', 0);
+INSERT INTO avaliacaodocondutor VALUES (2, '252957100', '253953101', 1);
+INSERT INTO avaliacaodocondutor VALUES (3, '252957100', '253953101', 2);
+INSERT INTO avaliacaodocondutor VALUES (4, '252957100', '253953101', 3);
+INSERT INTO avaliacaodocondutor VALUES (5, '252957100', '253953101', 4);
+INSERT INTO avaliacaodocondutor VALUES (6, '252957100', '253953101', 5);
+INSERT INTO avaliacaodocondutor VALUES (7, '252957100', '253953101', 0);
+INSERT INTO avaliacaodocondutor VALUES (8, '252957100', '253953101', 1);
+INSERT INTO avaliacaodocondutor VALUES (9, '252957100', '253953101', 2);
+INSERT INTO avaliacaodocondutor VALUES (10, '252957100', '253953101', 3);
+
+INSERT INTO avaliacaodocondutor VALUES (11, '214039860', '253953101', 4);
+INSERT INTO avaliacaodocondutor VALUES (12, '214039860', '216031869', 5);
+INSERT INTO avaliacaodocondutor VALUES (13, '214039860', '216031869', 0);
+INSERT INTO avaliacaodocondutor VALUES (14, '214039860', '216031869', 1);
+INSERT INTO avaliacaodocondutor VALUES (15, '214039860', '216031869', 2);
+INSERT INTO avaliacaodocondutor VALUES (16, '214039860', '216031869', 3);
+INSERT INTO avaliacaodocondutor VALUES (17, '214039860', '216031869', 4);
+INSERT INTO avaliacaodocondutor VALUES (18, '214039860', '216031869', 5);
+INSERT INTO avaliacaodocondutor VALUES (19, '214039860', '216031869', 0);
+
+INSERT INTO avaliacaodocondutor VALUES (20, '215220731', '216031869', 1);
+INSERT INTO avaliacaodocondutor VALUES (21, '215220731', '216031869', 2);
+INSERT INTO avaliacaodocondutor VALUES (22, '215220731', '216031869', 3);
+INSERT INTO avaliacaodocondutor VALUES (23, '215220731', '218202737', 4);
+INSERT INTO avaliacaodocondutor VALUES (24, '215220731', '218202737', 5);
+INSERT INTO avaliacaodocondutor VALUES (25, '215220731', '218202737', 0);
+INSERT INTO avaliacaodocondutor VALUES (26, '215220731', '218202737', 1);
+INSERT INTO avaliacaodocondutor VALUES (27, '215220731', '218202737', 2);
+
+INSERT INTO avaliacaodocondutor VALUES (28, '288213490', '218202737', 1);
+INSERT INTO avaliacaodocondutor VALUES (29, '288213490', '218202737', 2);
+INSERT INTO avaliacaodocondutor VALUES (30, '288213490', '218202737', 3);
+INSERT INTO avaliacaodocondutor VALUES (31, '288213490', '218202737', 4);
+INSERT INTO avaliacaodocondutor VALUES (32, '288213490', '218202737', 5);
+INSERT INTO avaliacaodocondutor VALUES (33, '288213490', '218202737', 0);
+INSERT INTO avaliacaodocondutor VALUES (34, '288213490', '283215493', 1);
+
+INSERT INTO avaliacaodocondutor VALUES (35, '212117187', '283215493', 2);
+INSERT INTO avaliacaodocondutor VALUES (36, '212117187', '283215493', 3);
+INSERT INTO avaliacaodocondutor VALUES (37, '212117187', '283215493', 4);
+INSERT INTO avaliacaodocondutor VALUES (38, '212117187', '283215493', 5);
+INSERT INTO avaliacaodocondutor VALUES (39, '212117187', '283215493', 0);
+INSERT INTO avaliacaodocondutor VALUES (40, '212117187', '283215493', 1);
+
+INSERT INTO avaliacaodocondutor VALUES (41, '291528452', '283215493', 2);
+INSERT INTO avaliacaodocondutor VALUES (42, '291528452', '283215493', 3);
+INSERT INTO avaliacaodocondutor VALUES (43, '291528452', '283215493', 4);
+INSERT INTO avaliacaodocondutor VALUES (44, '291528452', '283215493', 5);
+INSERT INTO avaliacaodocondutor VALUES (45, '291528452', '219111182', 0);
+INSERT INTO avaliacaodocondutor VALUES (46, '215181257', '219111182', 1);
+INSERT INTO avaliacaodocondutor VALUES (47, '215181257', '219111182', 2);
+INSERT INTO avaliacaodocondutor VALUES (48, '215181257', '219111182', 3);
+INSERT INTO avaliacaodocondutor VALUES (49, '215181257', '219111182', 4);
+
+INSERT INTO avaliacaodocondutor VALUES (50, '219134558', '219111182', 5);
+INSERT INTO avaliacaodocondutor VALUES (51, '219134558', '219111182', 0);
+INSERT INTO avaliacaodocondutor VALUES (52, '219134558', '219111182', 1);
+
+INSERT INTO avaliacaodocondutor VALUES (53, '224233536', '219111182', 2);
+INSERT INTO avaliacaodocondutor VALUES (54, '224233536', '219111182', 3);
+
+INSERT INTO avaliacaodocondutor VALUES (55, '232322600', '219111182', 5);
+
+
+
+INSERT INTO avaliacaodocliente VALUES (1, '252957100', '253953101', 0);
+INSERT INTO avaliacaodocliente VALUES (2, '252957100', '253953101', 1);
+INSERT INTO avaliacaodocliente VALUES (3, '252957100', '253953101', 2);
+INSERT INTO avaliacaodocliente VALUES (4, '252957100', '253953101', 3);
+INSERT INTO avaliacaodocliente VALUES (5, '252957100', '253953101', 4);
+INSERT INTO avaliacaodocliente VALUES (6, '252957100', '253953101', 5);
+INSERT INTO avaliacaodocliente VALUES (7, '252957100', '253953101', 0);
+INSERT INTO avaliacaodocliente VALUES (8, '252957100', '253953101', 1);
+INSERT INTO avaliacaodocliente VALUES (9, '252957100', '253953101', 2);
+INSERT INTO avaliacaodocliente VALUES (10, '252957100', '253953101', 3);
+
+INSERT INTO avaliacaodocliente VALUES (11, '214039860', '253953101', 4);
+INSERT INTO avaliacaodocliente VALUES (12, '214039860', '216031869', 5);
+INSERT INTO avaliacaodocliente VALUES (13, '214039860', '216031869', 0);
+INSERT INTO avaliacaodocliente VALUES (14, '214039860', '216031869', 1);
+INSERT INTO avaliacaodocliente VALUES (15, '214039860', '216031869', 2);
+INSERT INTO avaliacaodocliente VALUES (16, '214039860', '216031869', 3);
+INSERT INTO avaliacaodocliente VALUES (17, '214039860', '216031869', 4);
+INSERT INTO avaliacaodocliente VALUES (18, '214039860', '216031869', 5);
+INSERT INTO avaliacaodocliente VALUES (19, '214039860', '216031869', 0);
+
+INSERT INTO avaliacaodocliente VALUES (20, '215220731', '216031869', 1);
+INSERT INTO avaliacaodocliente VALUES (21, '215220731', '216031869', 2);
+INSERT INTO avaliacaodocliente VALUES (22, '215220731', '216031869', 3);
+INSERT INTO avaliacaodocliente VALUES (23, '215220731', '218202737', 4);
+INSERT INTO avaliacaodocliente VALUES (24, '215220731', '218202737', 5);
+INSERT INTO avaliacaodocliente VALUES (25, '215220731', '218202737', 0);
+INSERT INTO avaliacaodocliente VALUES (26, '215220731', '218202737', 1);
+INSERT INTO avaliacaodocliente VALUES (27, '215220731', '218202737', 2);
+
+INSERT INTO avaliacaodocliente VALUES (28, '288213490', '218202737', 1);
+INSERT INTO avaliacaodocliente VALUES (29, '288213490', '218202737', 2);
+INSERT INTO avaliacaodocliente VALUES (30, '288213490', '218202737', 3);
+INSERT INTO avaliacaodocliente VALUES (31, '288213490', '218202737', 4);
+INSERT INTO avaliacaodocliente VALUES (32, '288213490', '218202737', 5);
+INSERT INTO avaliacaodocliente VALUES (33, '288213490', '218202737', 0);
+INSERT INTO avaliacaodocliente VALUES (34, '288213490', '283215493', 1);
+
+INSERT INTO avaliacaodocliente VALUES (35, '212117187', '283215493', 2);
+INSERT INTO avaliacaodocliente VALUES (36, '212117187', '283215493', 3);
+INSERT INTO avaliacaodocliente VALUES (37, '212117187', '283215493', 4);
+INSERT INTO avaliacaodocliente VALUES (38, '212117187', '283215493', 5);
+INSERT INTO avaliacaodocliente VALUES (39, '212117187', '283215493', 0);
+INSERT INTO avaliacaodocliente VALUES (40, '212117187', '283215493', 1);
+
+INSERT INTO avaliacaodocliente VALUES (41, '291528452', '283215493', 2);
+INSERT INTO avaliacaodocliente VALUES (42, '291528452', '283215493', 3);
+INSERT INTO avaliacaodocliente VALUES (43, '291528452', '283215493', 4);
+INSERT INTO avaliacaodocliente VALUES (44, '291528452', '283215493', 5);
+INSERT INTO avaliacaodocliente VALUES (45, '291528452', '219111182', 0);
+
+INSERT INTO avaliacaodocliente VALUES (46, '215181257', '219111182', 1);
+INSERT INTO avaliacaodocliente VALUES (47, '215181257', '219111182', 2);
+INSERT INTO avaliacaodocliente VALUES (48, '215181257', '219111182', 3);
+INSERT INTO avaliacaodocliente VALUES (49, '215181257', '219111182', 4);
+
+INSERT INTO avaliacaodocliente VALUES (50, '219134558', '219111182', 5);
+INSERT INTO avaliacaodocliente VALUES (51, '219134558', '219111182', 0);
+INSERT INTO avaliacaodocliente VALUES (52, '219134558', '219111182', 1);
+
+INSERT INTO avaliacaodocliente VALUES (53, '224233536', '219111182', 2);
+INSERT INTO avaliacaodocliente VALUES (54, '224233536', '219111182', 3);
+
+INSERT INTO avaliacaodocliente VALUES (55, '232322600', '219111182', 4);
+
+
+
+
+
+10a
+SELECT nome, apelido 
+FROM condutor 
+WHERE inf_veiculo = '6 passageiros';
+
+
+
+10b
+SELECT DISTINCT condutor.nome, condutor.apelido, cliente.nome, cliente.apelido
+FROM condutor, servico, cliente, pedido
+WHERE condutor.nif_condutor = servico.nif_condutor
+AND servico.nif_cliente = cliente.nif_cliente
+AND origem = 'Evora'
+AND destino = 'Montemor'
+AND cancelado = 'nao cancelado'
+AND ((data_inicio >= '2023-11-01') AND (data_fim < '2023-12-01'));
+
+
+
+10c
+SELECT cliente.nome, cliente.apelido, AVG(pontuacaocliente) = 5 AS numero
+FROM cliente, avaliacaodocondutor
+WHERE cliente.nif_cliente = avaliacaodocondutor.nif_cliente
+GROUP BY cliente.nome, cliente.apelido;
+
+
+
+10d
+SELECT condutor.nome, condutor.apelido FROM condutor
+EXCEPT
+SELECT condutor.nome, condutor.apelido FROM condutor, servico, pedido, cliente
+WHERE condutor.nif_condutor = servico.nif_condutor
+AND servico.nif_cliente = pedido.nif_cliente
+AND destino = 'Beja';
+
+
+
+10e
+SELECT distinct condutor.telefone 
+FROM condutor, servico, cliente, pedido
+WHERE condutor.nif_condutor = servico.nif_condutor
+AND servico.nif_cliente = cliente.nif_cliente
+AND servico.nif_cliente = pedido.nif_cliente
+AND destino = 'Viana do Alentejo'
+AND cliente.nome = 'Manuel'
+And cliente.apelido = 'Santos'
+AND data_inicio = '2023-12-20'
+AND cancelado = 'nao cancelado';
+
+
+
+10f
+SELECT DISTINCT cliente.nome, cliente.apelido, ROUND(AVG(avaliacaodocondutor.pontuacaocliente), 2) 
+FROM cliente, avaliacaodocondutor
+WHERE cliente.nif_cliente = avaliacaodocondutor.nif_cliente
+GROUP BY cliente.nome, cliente.apelido ;
+
+
+
+10g
+SELECT condutor.nome, condutor.apelido, COUNT (*) 
+FROM condutor, servico
+WHERE condutor.nif_condutor = servico.nif_condutor
+GROUP BY condutor.nome, condutor.apelido;
+
+
+
+10h
+SELECT cliente.nome, cliente.apelido, ROUND(MAX(subconsulta.media_pontuacao), 2) 
+FROM cliente, condutor,
+(SELECT nif_cliente, AVG(pontuacaocondutor) As media_pontuacao
+FROM avaliacaodocliente
+GROUP BY nif_cliente) AS subconsulta
+
+WHERE cliente.nif_cliente = subconsulta.nif_cliente
+AND condutor.nome = 'Joaquim'
+AND condutor.apelido = 'Gomes'
+
+GROUP BY cliente.nome, cliente.apelido 
+ORDER BY MAX(subconsulta.media_pontuacao) DESC
+LIMIT 1;
+
+
+
+10i
+SELECT cliente.nome, cliente.apelido, MAX(pedido.cancelado) 
+FROM cliente, pedido
+WHERE cliente.nif_cliente = pedido.nif_cliente
+AND cancelado = 'cancelado'
+GROUP BY cliente.nome, cliente.apelido
+ORDER BY MAX(pedido.cancelado) DESC
+LIMIT 1;
+
+
+
+10j
+SELECT condutor.nome, condutor.apelido
+FROM condutor
+
+EXCEPT
+
+SELECT condutor.nome, condutor.apelido
+FROM condutor, servico, pedido, cliente
+WHERE condutor.nif_condutor != servico.nif_condutor
+AND servico.nif_cliente = pedido.nif_cliente
+AND origem = 'Evora'
+AND destino = 'Portel'
+AND data_inicio = '2023-12-20'
+AND hora_inicio = '09:00:00';
+
+
+
+10k
+SELECT pedido.origem, pedido.destino, ROUND(Max(servico.valor_cobrado), 2) FROM pedido, servico
+WHERE servico.nif_cliente = pedido.nif_cliente
+AND ((servico.data_inicio >= '2023-12-01') AND (servico.data_fim < '2024-01-01'))
+AND ((pedido.datapedido >= '2023-12-01') AND (pedido.datapedido < '2024-01-01'))
+AND pedido.cancelado = 'nao cancelado'
+GROUP BY pedido.origem, pedido.destino
+ORDER BY MAX(servico.valor_cobrado) DESC
+LIMIT 1;
+
+
+
+10l
+SELECT condutor.nome, condutor.apelido, SUM(servico.valor_cobrado)
+FROM condutor, servico
+WHERE condutor.nif_condutor = servico.nif_condutor
+GROUP BY condutor.nome, condutor.apelido
+ORDER BY SUM(servico.valor_cobrado) DESC
+LIMIT 1;
+
+
+
+10m
+SELECT cliente.nome, cliente.apelido
+FROM cliente
+WHERE NOT EXISTS (
+    SELECT condutor.nif_condutor
+    FROM condutor
+    WHERE condutor.inf_veiculo = '6 passageiros'
+    AND NOT EXISTS (
+        SELECT servico.nif_condutor
+        FROM servico
+        WHERE servico.nif_cliente = cliente.nif_cliente
+        AND servico.nif_condutor = condutor.nif_condutor
+    )
+);

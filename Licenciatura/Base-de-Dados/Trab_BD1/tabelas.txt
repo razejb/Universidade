@@ -1,0 +1,203 @@
+CREATE TABLE membro(
+  Nome VARCHAR(40),
+  IdMemb VARCHAR(20),
+  Pais VARCHAR(20),
+  Cidade VARCHAR(40),
+  DataNasc DATE,
+  PRIMARY KEY (IdMemb)
+  );
+
+
+CREATE TABLE amigo(
+  IdMemb1 VARCHAR(20),
+  IdMemb2 VARCHAR(20),
+  PRIMARY Key (IdMemb1, IdMemb2),
+  FOREIGN KEY (IdMemb1) REFERENCES membro(IdMemb),
+  FOREIGN KEY (IdMemb2) REFERENCES membro(IdMemb)
+);
+
+
+CREATE TABLE livro(
+  ISBN INT NOT NULL,
+  titulo VARCHAR(40),
+  PRIMARY KEY (ISBN)
+);
+
+
+CREATE Table gosta(
+  IdMemb VARCHAR(20),
+  ISBN INT Not NULL,
+  PRIMARY KEY(IdMemb, ISBN),
+  FOREIGN KEY (ISBN) REFERENCES livro(ISBN),
+  FOREIGN KEY (IdMemb) REFERENCES membro(IdMemb)
+);
+
+
+CREATE TABLE genero(
+  ISBN INT NOT NULL,
+  genero VARCHAR(40),
+  PRIMARY KEY (ISBN, genero),
+  FOREIGN KEY (ISBN) REFERENCES livro(ISBN)
+);
+
+
+CREATE TABLE autor(
+  Coda INT NOT NULL,
+  Nome VARCHAR(40),
+  Pais VARCHAR(20),
+  PRIMARY KEY(Coda)
+);
+
+
+CREATE TABLE autoria(
+  ISBN INT NOT NULL,
+  Coda INT NOT NULL,
+  Primary KEY (ISBN, Coda),
+  FOREIGN KEY (ISBN) REFERENCES livro(ISBN),
+  FOREIGN KEY (Coda) REFERENCES autor(Coda)
+);
+
+
+
+
+INSERT INTO membro VALUES('Joao', 'oleitor', 'Portugal', 'Almeirim', TO_DATE('21-01-2003', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Andre', 'ocorredor', 'Portugal', 'Lisboa', TO_DATE('01-02-2005', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Diogo', 'otorto', 'Portugal', 'Lisboa', TO_DATE('25-01-2001', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Ricardo', 'orico', 'Portugal', 'Lisboa', TO_DATE('12-01-2003', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Miguel', 'opobre', 'Portugal', 'Santarem', TO_DATE('14-01-1999', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Carlos', 'ointeligente', 'Portugal', 'Beja', TO_DATE('17-01-1999', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Joana', 'obenfiquista', 'Portugal', 'Beja', TO_DATE('21-01-1995', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Diana', 'ogato', 'Portugal', 'Portimao', TO_DATE('18-01-2006', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Andreia', 'oescritor', 'Portugal', 'Monte_Gordo',  TO_DATE('22-01-1993', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Catarina', 'opassaro', 'Portugal', 'Porto', TO_DATE('26-01-1987', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Bernardo', 'oleao', 'Portugal', 'Porto', TO_DATE('11-01-1993', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Filipa', 'ocrocodilo', 'Portugal', 'Porto', TO_DATE('08-01-1994', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Vanessa', 'obucha', 'Portugal', 'Porto', TO_DATE('09-01-1986', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Joao', 'oestica', 'Portugal', 'Coimbra', TO_DATE('02-01-1985', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Georgina', 'oslime', 'Portugal', 'Coimbra', TO_DATE('05-01-1982', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Mariana', 'oreligioso', 'Portugal', 'Evora', TO_DATE('22-01-2007', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Victor', 'obolt', 'Portugal', 'Evora', TO_DATE('16-01-2008', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Carlos', 'odetetive', 'Portugal', 'Evora', TO_DATE('17-01-2002', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Erica', 'orei', 'Portugal', 'Barreiro', TO_DATE('02-01-2003', 'DD-MM-YYYY'));
+INSERT INTO membro VALUES('Antonio', 'oarthur', 'Portugal', 'Alcochete', TO_DATE('22-01-2001', 'DD-MM-YYYY'));
+
+
+INSERT INTO livro VALUES('123', 'Memorial do Convento');
+INSERT INTO livro VALUES('124', 'O Principezinho');
+INSERT INTO livro VALUES('125', 'O Assassinato no Expresso Oriente');
+INSERT INTO livro VALUES('126', 'A luz de Pequim');
+INSERT INTO livro VALUES('127', 'Pai Rico, Pai Pobre');
+INSERT INTO livro VALUES('128', 'A Caverna');
+INSERT INTO livro VALUES('129', 'A noite das bruxas');
+INSERT INTO livro VALUES('130', 'Os cinco porquinhos');
+INSERT INTO livro VALUES('131', 'O colecionador de erva');
+INSERT INTO livro VALUES('132', 'O mar em Casablanca');
+
+
+INSERT INTO autor VALUES('1', 'Jose Saramago', 'Portugal');
+INSERT INTO autor VALUES('2', 'Antoine de Saint-Exupery', 'França');
+INSERT INTO autor VALUES('3', 'Robert Kiyosaki', 'EUA');
+INSERT INTO autor VALUES('4', 'Agatha Christie', 'Reino Unido');
+INSERT INTO autor VALUES('5', 'Francisco Jose Viegas', 'Portugal');
+
+
+INSERT INTO autoria VALUES('123', '1');
+INSERT INTO autoria VALUES('124', '2');
+INSERT INTO autoria VALUES('125', '3');
+INSERT INTO autoria VALUES('126', '4');
+INSERT INTO autoria VALUES('127', '5');
+
+INSERT INTO autoria VALUES('128', '1');
+INSERT INTO autoria VALUES('129', '2');
+INSERT INTO autoria VALUES('130', '3');
+INSERT INTO autoria VALUES('131', '4');
+INSERT INTO autoria VALUES('132', '5');
+
+
+INSERT INTO autoria VALUES('123', '2');
+INSERT INTO autoria VALUES('123', '3');
+
+INSERT INTO autoria VALUES('124', '4');
+
+
+INSERT INTO genero VALUES ('123', 'Romance') ;
+INSERT INTO genero VALUES ('124', 'Romance');
+INSERT INTO genero Values ('125', 'Misterio');
+INSERT INTO genero VALUES ('126',  'Ficçao' );
+INSERT INTO genero VALUES ('126',  'Misterio' );
+INSERT INTO genero VALUES ('127', 'Finanças Pessoais');
+INSERT INTO genero VALUES ('128', 'Romance');
+INSERT INTO genero VALUES ('128', 'Ficçao');
+INSERT INTO genero VALUES ('129', 'Romance');
+INSERT INTO genero VALUES ('129', 'Misterio');
+INSERT INTO genero VALUES ('130', 'Romance');
+INSERT INTO genero VALUES ('130', 'Misterio');
+INSERT INTO genero VALUES ('131', 'Romance');
+INSERT INTO genero VALUES ('132', 'Drama');
+
+
+INSERT INTO amigo VALUES ('ogato', 'ocorredor');
+INSERT INTO amigo VALUES ('ogato', 'otorto');
+INSERT INTO amigo VALUES ('ogato', 'orico');
+INSERT INTO amigo VALUES ('ogato', 'opobre');
+INSERT INTO amigo VALUES ('ogato', 'ointeligente');
+INSERT INTO amigo VALUES ('ogato', 'obenfiquista');
+INSERT INTO amigo VALUES ('ogato', 'oleitor');
+INSERT INTO amigo VALUES ('ogato', 'oescritor');
+INSERT INTO amigo VALUES ('ogato', 'opassaro');
+INSERT INTO amigo VALUES ('ogato', 'oleao');
+INSERT INTO amigo VALUES ('ogato', 'ocrocodilo');
+INSERT INTO amigo VALUES ('ogato', 'obucha');
+INSERT INTO amigo VALUES ('ogato', 'oestica');
+INSERT INTO amigo VALUES ('ogato', 'oslime');
+INSERT INTO amigo VALUES ('ogato', 'oreligioso');
+INSERT INTO amigo VALUES ('ogato', 'obolt');
+INSERT INTO amigo VALUES ('ogato', 'odetetive');
+INSERT INTO amigo VALUES ('ogato', 'orei');
+INSERT INTO amigo VALUES ('ogato', 'oarthur');
+
+
+INSERT INTO amigo VALUES ('ocorredor', 'otorto');
+INSERT INTO amigo VALUES ('ocorredor', 'orico');
+INSERT INTO amigo VALUES ('ocorredor', 'opobre');
+
+INSERT INTO amigo VALUES ('otorto', 'ointeligente');
+INSERT INTO amigo VALUES ('otorto', 'obenfiquista');
+INSERT INTO amigo VALUES ('otorto', 'oarthur');
+
+INSERT INTO amigo VALUES ('orico', 'oescritor');
+INSERT INTO amigo VALUES ('orico', 'opassaro');
+INSERT INTO amigo VALUES ('orico', 'oleao');
+
+INSERT INTO amigo VALUES ('opobre', 'ocrocodilo');
+INSERT INTO amigo VALUES ('opobre', 'obucha');
+INSERT INTO amigo VALUES ('opobre', 'oestica');
+
+
+INSERT INTO gosta VALUES ('oleitor', '123') ;
+INSERT INTO gosta VALUES ('ocorredor', '124') ;
+INSERT INTO gosta VALUES ('otorto', '125') ;
+INSERT INTO gosta VALUES ('orico', '126') ;
+INSERT INTO gosta VALUES ('opobre', '127') ;
+
+INSERT INTO gosta VALUES ('ointeligente', '128') ;
+INSERT INTO gosta VALUES ('obenfiquista', '129') ;
+INSERT INTO gosta VALUES ('ogato', '130') ;
+INSERT INTO gosta VALUES ('oescritor', '131') ;
+INSERT INTO gosta VALUES ('opassaro', '132') ;
+
+INSERT INTO gosta VALUES ('oleao', '123') ;
+INSERT INTO gosta VALUES ('ocrocodilo', '124') ;
+INSERT INTO gosta VALUES ('obucha', '125') ;
+INSERT INTO gosta VALUES ('oestica', '126') ;
+INSERT INTO gosta VALUES ('oslime', '127') ;
+
+INSERT INTO gosta VALUES ('oreligioso', '128') ;
+INSERT INTO gosta VALUES ('obolt', '129') ;
+INSERT INTO gosta VALUES ('odetetive', '130') ;
+INSERT INTO gosta VALUES ('orei', '131') ;
+INSERT INTO gosta VALUES ('oarthur', '132') ;
+
+
+INSERT INTO gosta VALUES ('ocorredor', '127') ;
+INSERT INTO gosta VALUES ('ocorredor', '132') ;
