@@ -1,0 +1,8 @@
+18000
+6
+monopoly 5000 3
+catan 5000 3
+splendor 6000 3
+codenames 6000 3
+azul 7000 3
+pandemic 7000 3
